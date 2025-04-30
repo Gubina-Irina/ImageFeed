@@ -18,10 +18,14 @@ final class ImagesListCell: UITableViewCell {
     
     private let gradientLayer = CAGradientLayer()
     
-    private func setupGradient() {
-        let darkColor = UIColor(red: 26/255, green: 27/255, blue: 34/255, alpha: 1.0)
-        
+    override func layoutSubviews() {
+        super.layoutSubviews()
         gradientLayer.frame = gradientView.bounds
+    }
+    
+    func setupGradient() {
+        guard gradientLayer.superlayer == nil else { return }
+        let darkColor = UIColor(red: 26/255, green: 27/255, blue: 34/255, alpha: 1.0)
         
         gradientLayer.colors = [
             darkColor.withAlphaComponent(0.6).cgColor,

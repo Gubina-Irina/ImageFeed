@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ImagesListViewController: UIViewController {
+final class ImagesListViewController: UIViewController {
     
     @IBOutlet private var tableView: UITableView!
     
@@ -21,13 +21,13 @@ class ImagesListViewController: UIViewController {
     }()
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return UIStatusBarStyle.lightContent
+        UIStatusBarStyle.lightContent
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.rowHeight = 200
+        //tableView.rowHeight = 200
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
         print("ImagesListViewController loaded")
     }
@@ -44,6 +44,7 @@ extension ImagesListViewController: UITableViewDataSource {
         guard let imageListCell = cell as? ImagesListCell else { return UITableViewCell() }
         
         configCell(for: imageListCell, with: indexPath)
+        imageListCell.setupGradient()
         return imageListCell
     }
 }
@@ -54,12 +55,12 @@ extension ImagesListViewController: UITableViewDelegate {
         guard let image = UIImage(named: photosName[indexPath.row]) else { return }
         
         cell.cellImageView.image = image
+        
         cell.dateLabel.text = dateFormatter.string(from: Date())
         
         if indexPath.row%2 == 0 {
             cell.likeButton.setImage(UIImage(named: "like_on"), for: .normal)
-        }
-        else {
+        } else {
             cell.likeButton.setImage(UIImage(named: "like_off"), for: .normal)
         }
         

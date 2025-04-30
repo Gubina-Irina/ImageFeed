@@ -61,10 +61,17 @@
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="30" id="xcM-tU-TvH"/>
                                                     </constraints>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadiusLeft">
+                                                            <integer key="value" value="16"/>
+                                                        </userDefinedRuntimeAttribute>
+                                                        <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                                    </userDefinedRuntimeAttributes>
                                                 </view>
                                             </subviews>
                                             <color key="backgroundColor" red="0.10196078431372549" green="0.10588235294117647" blue="0.13333333333333333" alpha="1" colorSpace="calibratedRGB"/>
                                             <constraints>
+                                                <constraint firstItem="tOw-kf-xlu" firstAttribute="leading" secondItem="fon-nc-tgY" secondAttribute="leading" id="3gR-lX-GCR"/>
                                                 <constraint firstItem="tOw-kf-xlu" firstAttribute="bottom" secondItem="fon-nc-tgY" secondAttribute="bottom" id="B6L-Mb-W3Y"/>
                                                 <constraint firstAttribute="bottom" secondItem="fon-nc-tgY" secondAttribute="bottom" constant="4" id="Go8-Bw-dT0"/>
                                                 <constraint firstItem="fon-nc-tgY" firstAttribute="top" secondItem="ieB-Kq-aOf" secondAttribute="top" constant="4" id="KD4-lv-v5t"/>
@@ -72,10 +79,9 @@
                                                 <constraint firstAttribute="trailing" secondItem="fon-nc-tgY" secondAttribute="trailing" constant="16" id="Q3O-zM-0mv"/>
                                                 <constraint firstItem="s1D-OI-HgN" firstAttribute="top" secondItem="fon-nc-tgY" secondAttribute="top" id="Sig-u7-Bhd"/>
                                                 <constraint firstItem="nUg-GS-Adc" firstAttribute="leading" secondItem="fon-nc-tgY" secondAttribute="leading" constant="8" id="WWG-um-wGa"/>
-                                                <constraint firstItem="tOw-kf-xlu" firstAttribute="leading" secondItem="fon-nc-tgY" secondAttribute="leading" id="WbT-3h-qLj"/>
                                                 <constraint firstItem="fon-nc-tgY" firstAttribute="bottom" secondItem="nUg-GS-Adc" secondAttribute="bottom" constant="8" id="XaF-rJ-TiR"/>
                                                 <constraint firstItem="fon-nc-tgY" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="nUg-GS-Adc" secondAttribute="trailing" constant="8" id="pp3-cQ-kES"/>
-                                                <constraint firstItem="tOw-kf-xlu" firstAttribute="trailing" secondItem="fon-nc-tgY" secondAttribute="trailing" id="tOp-Cc-A0O"/>
+                                                <constraint firstItem="tOw-kf-xlu" firstAttribute="trailing" secondItem="fon-nc-tgY" secondAttribute="trailing" id="qs0-Nv-H6m"/>
                                                 <constraint firstItem="fon-nc-tgY" firstAttribute="trailing" secondItem="s1D-OI-HgN" secondAttribute="trailing" id="u0h-is-pcU"/>
                                             </constraints>
                                         </tableViewCellContentView>
