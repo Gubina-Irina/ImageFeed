@@ -171,11 +171,11 @@
                         <color key="backgroundColor" name="YP Black (iOS)"/>
                         <constraints>
                             <constraint firstItem="tgu-km-M5z" firstAttribute="top" secondItem="VOV-Kz-BTf" secondAttribute="top" constant="9" id="4OG-8U-yUY"/>
-                            <constraint firstItem="ez4-vK-Mjh" firstAttribute="bottom" secondItem="VOV-Kz-BTf" secondAttribute="bottom" id="6YU-40-5oR"/>
+                            <constraint firstItem="ez4-vK-Mjh" firstAttribute="bottom" secondItem="kh8-Fa-j3f" secondAttribute="bottom" id="6YU-40-5oR"/>
                             <constraint firstItem="Lm3-KP-gok" firstAttribute="centerX" secondItem="VOV-Kz-BTf" secondAttribute="centerX" id="8AO-QU-Bs3"/>
                             <constraint firstItem="VOV-Kz-BTf" firstAttribute="leading" secondItem="ez4-vK-Mjh" secondAttribute="leading" id="8aY-hH-FkN"/>
                             <constraint firstItem="VOV-Kz-BTf" firstAttribute="bottom" secondItem="Lm3-KP-gok" secondAttribute="bottom" constant="17" id="QIO-XB-trk"/>
-                            <constraint firstItem="VOV-Kz-BTf" firstAttribute="top" secondItem="ez4-vK-Mjh" secondAttribute="top" id="Si3-qp-Al8"/>
+                            <constraint firstAttribute="top" secondItem="ez4-vK-Mjh" secondAttribute="top" id="Si3-qp-Al8"/>
                             <constraint firstItem="tgu-km-M5z" firstAttribute="leading" secondItem="VOV-Kz-BTf" secondAttribute="leading" constant="8" id="WWB-m7-Q3n"/>
                             <constraint firstItem="ez4-vK-Mjh" firstAttribute="trailing" secondItem="VOV-Kz-BTf" secondAttribute="trailing" id="vba-4E-3Kv"/>
                         </constraints>
@@ -221,22 +221,10 @@
                     <view key="view" contentMode="scaleToFill" id="MNB-q9-NrI">
                         <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Екатерина Новикова" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pwf-h6-Bun">
-                                <rect key="frame" x="16.000000000000014" y="157" width="227.33333333333337" height="28"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="23"/>
-                                <color key="textColor" name="YP White (iOS)"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
                         <viewLayoutGuide key="safeArea" id="6n2-Ye-2Pe"/>
                         <color key="backgroundColor" name="YP Black (iOS)"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="" image="tab_profile_active" id="Nwt-du-6zU"/>
-                    <connections>
-                        <outlet property="nameLabel" destination="Pwf-h6-Bun" id="tMV-0f-J2a"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VQx-BM-Fau" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
