@@ -29,6 +29,15 @@ class ProfileViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if #available(iOS 15.0, *) {
+                let appearance = UITabBarAppearance()
+                appearance.configureWithOpaqueBackground()
+                appearance.backgroundColor = UIColor(named: "YP Black (iOS)")
+                tabBarController?.tabBar.standardAppearance = appearance
+                tabBarController?.tabBar.scrollEdgeAppearance = appearance
+            }
+        
         configureView()
         setupUI()
     }
