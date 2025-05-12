@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SingleImageViewController: UIViewController {
+final class SingleImageViewController: UIViewController {
     // MARK: - IB Outlets
     @IBOutlet private var singleImageView: UIImageView!
     @IBOutlet private var scrollView: UIScrollView!

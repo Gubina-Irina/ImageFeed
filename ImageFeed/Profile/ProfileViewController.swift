@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ProfileViewController: UIViewController {
+final class ProfileViewController: UIViewController {
     
     // MARK: - Private Properties
     private var profilePhotoImageView: UIImageView!
@@ -43,6 +43,7 @@ class ProfileViewController: UIViewController {
     }
     
     // MARK: - Actions
+    // TODO:
     @objc func didTapLogoutButton() {}
     
     // MARK: - Public Methods
