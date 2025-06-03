@@ -30,7 +30,7 @@ final class WebViewViewController: UIViewController {
         webView.navigationDelegate = self
         
         configureBackButton()
-        loadAuthView()
+        loadAuthorizationPage()
         
         updateProgress()
     }
@@ -88,17 +88,12 @@ final class WebViewViewController: UIViewController {
         navigationController?.popViewController(animated: true)
     }
     
-    private func loadAuthView() {
+    private func loadAuthorizationPage() {
         guard var urlComponents = URLComponents(string: WebViewConstants.unsplashAuthorizeURLString) else {
             return
         }
         
-        urlComponents.queryItems = [
-            URLQueryItem(name: "client_id", value: Constants.accessKey),
-            URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
-            URLQueryItem(name: "response_type", value: "code"),
-            URLQueryItem(name: "scope", value: Constants.accessScope)
-        ]
+        urlComponents.queryItems = makeAuthorizationQueryItems()
         
         guard let url = urlComponents.url else {
             return
@@ -106,6 +101,15 @@ final class WebViewViewController: UIViewController {
         
         let request = URLRequest(url: url)
         webView.load(request)
+    }
+    
+    private func makeAuthorizationQueryItems() -> [URLQueryItem] {
+        [
+            URLQueryItem(name: "client_id", value: Constants.accessKey),
+            URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
+            URLQueryItem(name: "response_type", value: "code"),
+            URLQueryItem(name: "scope", value: Constants.accessScope)
+        ]
     }
 }
 

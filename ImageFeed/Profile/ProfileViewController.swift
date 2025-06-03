@@ -111,8 +111,12 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setupLogoutButton() {
+        guard let exitImage = UIImage(named: "exit") else {
+            assertionFailure("Failed to load exit image")
+            return
+        }
         logoutButton = UIButton.systemButton(
-            with: UIImage(named: "exit")!,
+            with: exitImage,
             target: self,
             action: #selector (Self.didTapLogoutButton))
         logoutButton.tintColor = UIColor(named: "YP Red (iOS)")

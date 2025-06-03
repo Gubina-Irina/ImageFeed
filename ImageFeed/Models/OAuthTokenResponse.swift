@@ -9,10 +9,9 @@ import Foundation
 
 struct OAuthTokenResponseBody: Decodable {
     let accessToken: String
-    
-    enum CodingKeys: String, CodingKey {
-        case accessToken = "access_token"
-    }
+    let tokenType: String
+    let scope: String
+    let createdAt: Int
 }
 
 

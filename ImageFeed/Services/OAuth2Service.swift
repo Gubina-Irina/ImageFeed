@@ -70,7 +70,9 @@ final class OAuth2Service {
             }
             
             do {
-                let result = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                let result = try decoder.decode(OAuthTokenResponseBody.self, from: data)
                 DispatchQueue.main.async {
                     completion(.success(result.accessToken))
                 }
