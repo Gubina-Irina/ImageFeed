@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
@@ -16,44 +17,117 @@ final class ProfileViewController: UIViewController {
     private var descriptionLabel: UILabel!
     private var logoutButton: UIButton!
     
-    // MARK: - ProfileData
-    private var profileData = ProfileData(name: "Екатерина Новикова",
-                                          login: "@ekaterina_nov",
-                                          description: "Hello, world!",
-                                          profileAvatar: "profilePhoto") {
-        didSet {
-            updateUI()
-        }
-    }
+    private var profileImageServiceObserver: NSObjectProtocol?
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if #available(iOS 15.0, *) {
-                let appearance = UITabBarAppearance()
-                appearance.configureWithOpaqueBackground()
-                appearance.backgroundColor = UIColor(named: "YP Black (iOS)")
-                tabBarController?.tabBar.standardAppearance = appearance
-                tabBarController?.tabBar.scrollEdgeAppearance = appearance
-            }
-        
-        configureView()
         setupUI()
+        setupObservers()
+        configureAppearance()
+        loadProfileData()
+        
     }
     
     // MARK: - Actions
     // TODO:
     @objc func didTapLogoutButton() {}
     
-    // MARK: - Public Methods
-    func updateProfile(name: String? = nil, login: String? = nil, description: String? = nil) {
-        if let name = name { profileData.name = name }
-        if let login = login { profileData.login = login }
-        if let description = description { profileData.description = description }
+    // MARK: - Private Methods
+    private func setupObservers() {
+        profileImageServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ProfileImageService.didChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                guard let self = self else { return }
+                self.updateAvatar()
+            }
     }
     
-    // MARK: - Private Methods
+    private func configureAppearance() {
+        if #available(iOS 15.0, *) {
+            let appearance = UITabBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = UIColor(named: "YP Black (iOS)")
+            tabBarController?.tabBar.standardAppearance = appearance
+            tabBarController?.tabBar.scrollEdgeAppearance = appearance
+        }
+    }
+    
+    private func updateAvatar() {
+        guard
+            let profileImageURL = ProfileImageService.shared.avatarURL,
+            let url = URL(string: profileImageURL)
+        else {
+            // print("💅 avatar URL available, using placeholder")
+            profilePhotoImageView.image = UIImage(named: "avatar_placeholder")
+            return
+        }
+        profilePhotoImageView.kf.cancelDownloadTask()
+        
+        // print("💅 Loading avatar from URL: \(url.absoluteString)")
+        let processor = RoundCornerImageProcessor(cornerRadius: 61)
+        profilePhotoImageView.kf.setImage(with: url,
+                                          placeholder: UIImage(named: "avatar_placeholder"),
+                                          options: [
+                                            .processor(processor),
+                                            .transition(.fade(0.3)),
+                                            .cacheOriginalImage,
+                                            .keepCurrentImageWhileLoading
+                                          ])
+        //        { [weak self] result in
+        //            switch result {
+        //            case .success(let value):
+        //                print("💅 Avatar loaded successfully: \(value.source.url?.absoluteString ?? "")")
+        //            case .failure(let error):
+        //                print("💅 Failed to load avatar: \(error.localizedDescription)")
+        //                self?.profilePhotoImageView.image = UIImage(named: "avatar_placeholder")
+        //            }
+        //        }
+    }
+    
+    //    private func updateProfile() {
+    //        guard let profile = ProfileService.shared.profile else {
+    //            print("Profile data is not available")
+    //            
+    //            return
+    //        }
+    //        updateProfileDetails(profile: profile)
+    //    }
+    
+    private func loadProfileData() {
+        
+        guard let profile = ProfileService.shared.profile else {
+            showDefaultProfile()
+            return
+        }
+        updateProfileDetails(profile: profile)
+        ProfileImageService.shared.fetchProfileImageURL(username: profile.userName) { [weak self] result in
+            switch result {
+            case .success:
+                self?.updateAvatar()
+            case .failure(let error):
+                print("Failed to load avatar: \(error)")
+            }
+        }
+    }
+    
+    private func showDefaultProfile() {
+        nameLabel.text = "Имя Фамилия"
+        loginNameLabel.text = "@username"
+        descriptionLabel.text = nil
+    }
+    
+    private func updateProfileDetails(profile: Profile) {
+        
+        nameLabel.text = profile.name
+        loginNameLabel.text = profile.loginName
+        descriptionLabel.text = profile.bio
+    }
+    
     private func setupUI() {
         setupProfilePhoto()
         setupName()
@@ -67,22 +141,15 @@ final class ProfileViewController: UIViewController {
         view.backgroundColor = UIColor(named: "YP Black (iOS)")
     }
     
-    private func updateUI() {
-        nameLabel.text = profileData.name
-        loginNameLabel.text = profileData.login
-        descriptionLabel.text = profileData.description
-    }
-    
     private func setupProfilePhoto() {
-        let profileImage = UIImage(named: profileData.profileAvatar)
-        profilePhotoImageView = UIImageView(image: profileImage)
+        profilePhotoImageView = UIImageView()
         profilePhotoImageView.translatesAutoresizingMaskIntoConstraints = false
+        profilePhotoImageView.layer.cornerRadius = 35
         view.addSubview(profilePhotoImageView)
     }
     
     private func setupName() {
         nameLabel = UILabel()
-        nameLabel.text = profileData.name
         nameLabel.font = UIFont.systemFont(ofSize: 18, weight: .bold)
         nameLabel.textColor = UIColor(named: "YP White (iOS)")
         
@@ -92,7 +159,6 @@ final class ProfileViewController: UIViewController {
     
     private func setupLoginName() {
         loginNameLabel = UILabel()
-        loginNameLabel.text = profileData.login
         loginNameLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         loginNameLabel.textColor = UIColor(named: "YP Gray (iOS)")
         
@@ -102,7 +168,6 @@ final class ProfileViewController: UIViewController {
     
     private func setupDescription() {
         descriptionLabel = UILabel()
-        descriptionLabel.text = profileData.description
         descriptionLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         descriptionLabel.textColor = UIColor(named: "YP White (iOS)")
         
