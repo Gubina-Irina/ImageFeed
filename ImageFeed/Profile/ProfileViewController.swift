@@ -129,6 +129,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setupUI() {
+        view.backgroundColor = .ypBlackIOS
         setupProfilePhoto()
         setupName()
         setupLoginName()

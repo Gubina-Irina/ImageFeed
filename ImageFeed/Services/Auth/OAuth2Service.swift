@@ -83,5 +83,14 @@ final class OAuth2Service {
         }
         self.task = task
         task.resume()
+        //        // ТЕСТОВЫЙ КОД проверка алерта
+        //        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        //            let error = NSError(domain: "Тестовая ошибка", code: 500, userInfo: [
+        //                NSLocalizedDescriptionKey: "Имитация сетевой ошибки"
+        //            ])
+        //            completion(.failure(error))
+        //        }
+        //        return
+        //}
     }
 }

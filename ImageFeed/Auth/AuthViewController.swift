@@ -23,20 +23,32 @@ final class AuthViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == showWebViewSegueIdentifier {
-            guard let webViewVC = segue.destination as? WebViewViewController else { return }
-            webViewVC.delegate = self
+
+    @IBAction private func loginButtonTapped(_ sender: UIButton) {
+        showWebView()
+    }
+    
+    private func showWebView() {
+        let storyboard = UIStoryboard(name: "Main", bundle: .main)
+        guard let webViewVC = storyboard.instantiateViewController(withIdentifier: "WebViewViewController") as? WebViewViewController else {
+            assertionFailure("Could not instantiate WebViewViewController")
+            return
         }
+        
+        webViewVC.delegate = self
+        
+        let navController = UINavigationController(rootViewController: webViewVC)
+        navController.modalPresentationStyle = .fullScreen
+        present(navController, animated: true)
     }
     
     private func showAuthErrorAlert() {
         let alert = UIAlertController(
-            title: "Что-то пошло не так",
+            title: "Что-то пошло не так(",
             message: "Не удалось войти в систему",
             preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ок", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
+        alert.addAction(UIAlertAction(title: "ОK", style: .default, handler: nil))
+        present(alert, animated: true)
     }
 }
 
@@ -46,7 +58,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
         UIBlockingProgressHUD.show()
         
         oauth2Service.fetchOAuthToken(code: code) { [weak self] result in
-            guard let self = self else { return }
+            guard let self else { return }
             
             DispatchQueue.main.async {
                 UIBlockingProgressHUD.dismiss()
@@ -59,7 +71,9 @@ extension AuthViewController: WebViewViewControllerDelegate {
                     
                 case .failure(let error):
                     print("❌Failed to fetch token: \(error)")
-                    self.showAuthErrorAlert()
+                    vc.dismiss(animated: true) {
+                        self.showAuthErrorAlert()
+                    }
                 }
             }
         }
