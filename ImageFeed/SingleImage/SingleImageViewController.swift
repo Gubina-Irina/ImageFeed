@@ -34,35 +34,80 @@ final class SingleImageViewController: UIViewController {
             rescaleAndCenterImageInScrollView(image: image)
         }
     }
+    var imageURL: URL?
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        singleImageView.image = image
+        singleImageView.translatesAutoresizingMaskIntoConstraints = false
+        //singleImageView.image = image
         scrollView.delegate = self
         scrollView.minimumZoomScale = 0.1
-        scrollView.maximumZoomScale = 1.25
+        scrollView.maximumZoomScale = 3
+        scrollView.contentInsetAdjustmentBehavior = .never
         
+       // loadImage()
         if let image = image {
-            singleImageView.image = image
-            singleImageView.frame.size = image.size
-            rescaleAndCenterImageInScrollView(image: image)
-        }
+                    singleImageView.image = image
+                    singleImageView.frame.size = image.size
+                    scrollView.contentSize = image.size
+                    rescaleAndCenterImageInScrollView(image: image)
+                } else {
+                    loadImage()
+                }
     }
     
     // MARK: - Private Methods
+    private func loadImage() {
+        guard let imageURL else { return }
+        
+        UIBlockingProgressHUD.show()
+        singleImageView.kf.setImage(with: imageURL) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            
+            guard let self else { return }
+            switch result {
+            case .success(let imageResult):
+                self.singleImageView.image = imageResult.image
+                self.singleImageView.frame.size = imageResult.image.size
+                self.scrollView.contentSize = imageResult.image.size
+                self.rescaleAndCenterImageInScrollView(image: imageResult.image)
+            case .failure:
+                self.showError()
+            }
+        }
+    }
+    
+    private func showError() {
+            let alert = UIAlertController(
+                title: "Ошибка",
+                message: "Что-то пошло не так. Попробовать ещё раз?",
+                preferredStyle: .alert
+            )
+            
+            alert.addAction(UIAlertAction(title: "Не надо", style: .default))
+            alert.addAction(UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
+                self?.loadImage()
+            })
+            
+            present(alert, animated: true)
+        }
+    
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
         let minZoomScale = scrollView.minimumZoomScale
         let maxZoomScale = scrollView.maximumZoomScale
-        view.layoutIfNeeded()
+        
+       // view.layoutIfNeeded()
+        
         let visibleRectSize = scrollView.bounds.size
         let imageSize = image.size
         
         let hScale = visibleRectSize.width / imageSize.width
         let vScale = visibleRectSize.height / imageSize.height
-        let scale = min(maxZoomScale, max(minZoomScale, min(hScale, vScale)))
+        let scale = min(maxZoomScale, max(minZoomScale, max(hScale, vScale)))
         
         scrollView.setZoomScale(scale, animated: false)
+        //scrollView.contentSize = image.size
         scrollView.layoutIfNeeded()
         
         updateContentInset()

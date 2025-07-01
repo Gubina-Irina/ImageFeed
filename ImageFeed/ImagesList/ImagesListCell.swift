@@ -7,7 +7,12 @@
 
 import UIKit
 
+protocol ImagesListCellDelegate: AnyObject {
+    func imageListCellDidTapLike(_ cell: ImagesListCell)
+}
+
 final class ImagesListCell: UITableViewCell {
+    weak var delegate: ImagesListCellDelegate?
     
     // MARK: - Constants
     static let reuseIdentifier = "ImagesListCell"
@@ -27,7 +32,40 @@ final class ImagesListCell: UITableViewCell {
         gradientLayer.frame = gradientView.bounds
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+            cellImageView.kf.cancelDownloadTask()
+            cellImageView.image = nil
+           // fullsizeImageView.kf.cancelDownloadTask()
+        }
+    
+    @IBAction private func likeButtonClicked(_ sender: UIButton) {
+        delegate?.imageListCellDidTapLike(self)
+    }
+    
     // MARK: - Public Methods
+    func configure(with photo: Photo) {
+            cellImageView.kf.setImage(
+                with: URL(string: photo.thumbImageURL),
+                placeholder: UIImage(named: "image_placeholder")
+            )
+        if let date = photo.createdAt {
+                let formatter = DateFormatter()
+            formatter.dateFormat = "d MMMM yyyy"
+                formatter.locale = Locale(identifier: "ru_RU")
+                dateLabel.text = formatter.string(from: date)
+            } else {
+                dateLabel.text = ""
+            }
+            setLikeButtonImage(isLiked: photo.isLiked)
+            setupGradient()
+        }
+        
+        func setLikeButtonImage(isLiked: Bool) {
+            let imageName = isLiked ? "like_on" : "like_off"
+            likeButton.setImage(UIImage(named: imageName), for: .normal)
+        }
+    
     func setupGradient() {
         guard gradientLayer.superlayer == nil else { return }
         let darkColor = UIColor(red: 26/255, green: 27/255, blue: 34/255, alpha: 1.0)

@@ -18,6 +18,7 @@ final class ProfileViewController: UIViewController {
     private var logoutButton: UIButton!
     
     private var profileImageServiceObserver: NSObjectProtocol?
+    let profileLogoutService = ProfileLogoutService.shared
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -31,10 +32,26 @@ final class ProfileViewController: UIViewController {
     }
     
     // MARK: - Actions
-    // TODO:
-    @objc func didTapLogoutButton() {}
+    
+    @objc func didTapLogoutButton() {
+        let alert = UIAlertController(
+            title: "Пока, пока!",
+            message: "Уверены, что хотите выйти?",
+            preferredStyle: .alert
+        )
+        alert.addAction(
+            UIAlertAction(title: "Нет", style: .cancel)
+        )
+        alert.addAction(
+            UIAlertAction(title: "Да", style: .destructive) { [weak self] _ in
+                self?.profileLogoutService.logout()
+            }
+        )
+        present(alert, animated: true)
+    }
     
     // MARK: - Private Methods
+    
     private func setupObservers() {
         profileImageServiceObserver = NotificationCenter.default
             .addObserver(
