@@ -7,6 +7,13 @@
 
 import Foundation
 
+protocol ImagesListServiceProtocol {
+    var photos: [Photo] { get }
+    func fetchPhotosNextPage()
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void)
+    func deleteImageList()
+}
+
 enum ImagesListServiceError: Error {
     case invalidRequest
     case invalidToken
@@ -14,7 +21,7 @@ enum ImagesListServiceError: Error {
         case decodingError
 }
 
-class ImagesListService {
+class ImagesListService: ImagesListServiceProtocol {
     private (set) var photos: [Photo] = []
     static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
     static let shared = ImagesListService()
@@ -29,6 +36,7 @@ class ImagesListService {
     private init() {}
     
     func fetchPhotosNextPage() {
+        print("➡️ fetchPhotosNextPage CALLED")
         guard task == nil else {return}
         
         let nextPage = (lastLoadedPage ?? 0) + 1
@@ -55,7 +63,7 @@ class ImagesListService {
                     }
                     self.lastLoadedPage = nextPage
                     self.photos.append(contentsOf: newPhotos)
-                    
+                    print("✅ Received photos: \(photoResults.count)")
                     NotificationCenter.default.post(
                         name: ImagesListService.didChangeNotification,
                         object: self
@@ -69,6 +77,8 @@ class ImagesListService {
         }
         self.task = task
         task.resume()
+        print("📡 Requesting page \(nextPage)")
+        
     }
     
     private func makePhotosRequest(page: Int, perPage: Int) -> URLRequest? {

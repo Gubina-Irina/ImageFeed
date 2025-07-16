@@ -26,6 +26,7 @@ final class ImagesListCell: UITableViewCell {
     // MARK: - Private Properties
     private let gradientLayer = CAGradientLayer()
     
+    
     // MARK: - Lifecycle
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -64,6 +65,7 @@ final class ImagesListCell: UITableViewCell {
         func setLikeButtonImage(isLiked: Bool) {
             let imageName = isLiked ? "like_on" : "like_off"
             likeButton.setImage(UIImage(named: imageName), for: .normal)
+            likeButton.accessibilityIdentifier = isLiked ? "like_on" : "like_off"
         }
     
     func setupGradient() {

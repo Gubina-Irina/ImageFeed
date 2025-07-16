@@ -8,7 +8,15 @@
 import UIKit
 import Kingfisher
 
-final class ProfileViewController: UIViewController {
+protocol ProfileViewControllerProtocol: AnyObject {
+    func configureViews()
+    func updateProfileDetails(profile: Profile)
+    func showDefaultProfile()
+    func setAvatar(url: URL?)
+    func showLogoutConfiguration()
+}
+
+final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
     
     // MARK: - Private Properties
     private var profilePhotoImageView: UIImageView!
@@ -17,23 +25,91 @@ final class ProfileViewController: UIViewController {
     private var descriptionLabel: UILabel!
     private var logoutButton: UIButton!
     
-    private var profileImageServiceObserver: NSObjectProtocol?
+    //private var profileImageServiceObserver: NSObjectProtocol?
+    
+    private let presenter: ProfileViewPresenterProtocol
     let profileLogoutService = ProfileLogoutService.shared
+    
+    init(presenter: ProfileViewPresenterProtocol) {
+        self.presenter = presenter
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        setupUI()
-        setupObservers()
-        configureAppearance()
-        loadProfileData()
+        presenter.view = self
+        presenter.viewDidLoad()
+        presenter.setupObservers()
+//        setupUI()
+//        setupObservers()
+//        configureAppearance()
+//        loadProfileData()
         
     }
     
     // MARK: - Actions
     
     @objc func didTapLogoutButton() {
+        presenter.didTapLogout()
+    }
+    
+    // MARK: - Private Methods
+    
+    func configureViews() {
+            view.backgroundColor = .ypBlackIOS
+            setupUI()
+           // setupConstraints()
+            configureAppearance()
+        }
+    
+    private func configureAppearance() {
+        if #available(iOS 15.0, *) {
+            let appearance = UITabBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = UIColor(named: "YP Black (iOS)")
+            tabBarController?.tabBar.standardAppearance = appearance
+            tabBarController?.tabBar.scrollEdgeAppearance = appearance
+        }
+    }
+    
+     func updateProfileDetails(profile: Profile) {
+        nameLabel.text = profile.name
+        loginNameLabel.text = profile.loginName
+        descriptionLabel.text = profile.bio
+    }
+    
+    func showDefaultProfile() {
+       nameLabel.text = "Имя Фамилия"
+       loginNameLabel.text = "@username"
+       descriptionLabel.text = nil
+   }
+    
+    func setAvatar(url: URL?) {
+            profilePhotoImageView.kf.cancelDownloadTask()
+            guard let url = url else {
+                profilePhotoImageView.image = UIImage(named: "avatar_placeholder")
+                return
+            }
+            
+            let processor = RoundCornerImageProcessor(cornerRadius: 61)
+            profilePhotoImageView.kf.setImage(
+                with: url,
+                placeholder: UIImage(named: "avatar_placeholder"),
+                options: [
+                    .processor(processor),
+                    .transition(.fade(0.3)),
+                    .cacheOriginalImage,
+                    .keepCurrentImageWhileLoading
+                ]
+            )
+        }
+    
+    func showLogoutConfiguration() {
         let alert = UIAlertController(
             title: "Пока, пока!",
             message: "Уверены, что хотите выйти?",
@@ -50,101 +126,6 @@ final class ProfileViewController: UIViewController {
         present(alert, animated: true)
     }
     
-    // MARK: - Private Methods
-    
-    private func setupObservers() {
-        profileImageServiceObserver = NotificationCenter.default
-            .addObserver(
-                forName: ProfileImageService.didChangeNotification,
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
-                guard let self = self else { return }
-                self.updateAvatar()
-            }
-    }
-    
-    private func configureAppearance() {
-        if #available(iOS 15.0, *) {
-            let appearance = UITabBarAppearance()
-            appearance.configureWithOpaqueBackground()
-            appearance.backgroundColor = UIColor(named: "YP Black (iOS)")
-            tabBarController?.tabBar.standardAppearance = appearance
-            tabBarController?.tabBar.scrollEdgeAppearance = appearance
-        }
-    }
-    
-    private func updateAvatar() {
-        guard
-            let profileImageURL = ProfileImageService.shared.avatarURL,
-            let url = URL(string: profileImageURL)
-        else {
-            // print("💅 avatar URL available, using placeholder")
-            profilePhotoImageView.image = UIImage(named: "avatar_placeholder")
-            return
-        }
-        profilePhotoImageView.kf.cancelDownloadTask()
-        
-        // print("💅 Loading avatar from URL: \(url.absoluteString)")
-        let processor = RoundCornerImageProcessor(cornerRadius: 61)
-        profilePhotoImageView.kf.setImage(with: url,
-                                          placeholder: UIImage(named: "avatar_placeholder"),
-                                          options: [
-                                            .processor(processor),
-                                            .transition(.fade(0.3)),
-                                            .cacheOriginalImage,
-                                            .keepCurrentImageWhileLoading
-                                          ])
-        //        { [weak self] result in
-        //            switch result {
-        //            case .success(let value):
-        //                print("💅 Avatar loaded successfully: \(value.source.url?.absoluteString ?? "")")
-        //            case .failure(let error):
-        //                print("💅 Failed to load avatar: \(error.localizedDescription)")
-        //                self?.profilePhotoImageView.image = UIImage(named: "avatar_placeholder")
-        //            }
-        //        }
-    }
-    
-    //    private func updateProfile() {
-    //        guard let profile = ProfileService.shared.profile else {
-    //            print("Profile data is not available")
-    //            
-    //            return
-    //        }
-    //        updateProfileDetails(profile: profile)
-    //    }
-    
-    private func loadProfileData() {
-        
-        guard let profile = ProfileService.shared.profile else {
-            showDefaultProfile()
-            return
-        }
-        updateProfileDetails(profile: profile)
-        ProfileImageService.shared.fetchProfileImageURL(username: profile.userName) { [weak self] result in
-            switch result {
-            case .success:
-                self?.updateAvatar()
-            case .failure(let error):
-                print("Failed to load avatar: \(error)")
-            }
-        }
-    }
-    
-    private func showDefaultProfile() {
-        nameLabel.text = "Имя Фамилия"
-        loginNameLabel.text = "@username"
-        descriptionLabel.text = nil
-    }
-    
-    private func updateProfileDetails(profile: Profile) {
-        
-        nameLabel.text = profile.name
-        loginNameLabel.text = profile.loginName
-        descriptionLabel.text = profile.bio
-    }
-    
     private func setupUI() {
         view.backgroundColor = .ypBlackIOS
         setupProfilePhoto()
@@ -155,7 +136,7 @@ final class ProfileViewController: UIViewController {
         setupConstraints()
     }
     
-    private func configureView() {
+     func configureView() {
         view.backgroundColor = UIColor(named: "YP Black (iOS)")
     }
     
@@ -206,6 +187,7 @@ final class ProfileViewController: UIViewController {
         
         logoutButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(logoutButton)
+        logoutButton.accessibilityIdentifier = "exit"
     }
     
     // MARK: - Constraints
