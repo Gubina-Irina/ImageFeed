@@ -35,8 +35,12 @@ final class AuthViewController: UIViewController {
             return
         }
         
-        webViewVC.delegate = self
+        let authHelper = AuthHelper(configuration: .standard)
+        let presenter = WebViewPresenter(authHelper: authHelper)
+        webViewVC.presenter = presenter
+        presenter.view = webViewVC
         
+        webViewVC.delegate = self
         let navController = UINavigationController(rootViewController: webViewVC)
         navController.modalPresentationStyle = .fullScreen
         present(navController, animated: true)

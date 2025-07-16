@@ -153,6 +153,7 @@
                             </scrollView>
                             <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tgu-km-M5z" userLabel="Back Button">
                                 <rect key="frame" x="16" y="43" width="24" height="24"/>
+                                <accessibility key="accessibilityConfiguration" identifier="backward"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="24" id="E81-be-FIg"/>
                                     <constraint firstAttribute="height" constant="24" id="WAt-WJ-4bF"/>
@@ -214,6 +215,9 @@
                                     <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
                                     <wkPreferences key="preferences"/>
                                 </wkWebViewConfiguration>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="UnsplashWebView"/>
+                                </userDefinedRuntimeAttributes>
                             </wkWebView>
                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="s2S-mU-nzz">
                                 <rect key="frame" x="0.0" y="47" width="390" height="4"/>
@@ -299,6 +303,7 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vJa-we-Pbt">
                                 <rect key="frame" x="16" y="684.66666666666663" width="358" height="48"/>
                                 <color key="backgroundColor" name="YP White (iOS)"/>
+                                <accessibility key="accessibilityConfiguration" identifier="Authenticate"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="VgB-j3-FS0"/>
                                 </constraints>
